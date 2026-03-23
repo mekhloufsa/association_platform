@@ -1,0 +1,264 @@
+﻿Listing all tables:
+Array
+(
+    [0] => activity_logs
+    [1] => annonces
+    [2] => appointments
+    [3] => association_requests
+    [4] => associations
+    [5] => campaigns
+    [6] => donations
+    [7] => help_requests
+    [8] => material_donations
+    [9] => payments
+    [10] => sieges
+    [11] => tasks
+    [12] => users
+    [13] => volunteers
+    [14] => wilayas
+)
+
+Structure of table 'activity_logs':
+CREATE TABLE `activity_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `action` varchar(255) NOT NULL,
+  `details` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `activity_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'annonces':
+CREATE TABLE `annonces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `author_user_id` int(11) NOT NULL,
+  `association_id` int(11) DEFAULT NULL,
+  `status` enum('draft','published','archived') DEFAULT 'draft',
+  `published_at` timestamp NULL DEFAULT NULL,
+  `image_path` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `author_user_id` (`author_user_id`),
+  KEY `association_id` (`association_id`),
+  CONSTRAINT `annonces_ibfk_1` FOREIGN KEY (`author_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `annonces_ibfk_2` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'appointments':
+CREATE TABLE `appointments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `requester_user_id` int(11) NOT NULL,
+  `target_user_id` int(11) NOT NULL,
+  `date_time` datetime NOT NULL,
+  `location` text NOT NULL,
+  `status` enum('scheduled','completed','cancelled') NOT NULL DEFAULT 'scheduled',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `requester_user_id` (`requester_user_id`),
+  KEY `target_user_id` (`target_user_id`),
+  CONSTRAINT `fk_appt_req` FOREIGN KEY (`requester_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_appt_tar` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+Structure of table 'association_requests':
+CREATE TABLE `association_requests` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`data`)),
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_assoc_req_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+Structure of table 'associations':
+CREATE TABLE `associations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `president_user_id` int(11) NOT NULL,
+  `national_account_status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `logo_path` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `thank_you_message` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`),
+  KEY `president_user_id` (`president_user_id`),
+  CONSTRAINT `associations_ibfk_1` FOREIGN KEY (`president_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'campaigns':
+CREATE TABLE `campaigns` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `association_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `max_volunteers` int(11) DEFAULT NULL,
+  `status` enum('open','closed','finished') DEFAULT 'open',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `association_id` (`association_id`),
+  CONSTRAINT `campaigns_ibfk_1` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'donations':
+CREATE TABLE `donations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `association_id` int(11) DEFAULT NULL,
+  `siege_id` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `type` enum('onetime','monthly') DEFAULT 'onetime',
+  `message` text DEFAULT NULL,
+  `status` enum('completed','failed','pending') DEFAULT 'completed',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `association_id` (`association_id`),
+  KEY `fk_donation_siege` (`siege_id`),
+  CONSTRAINT `donations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `donations_ibfk_2` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_donation_siege` FOREIGN KEY (`siege_id`) REFERENCES `sieges` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'help_requests':
+CREATE TABLE `help_requests` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `association_id` int(11) DEFAULT NULL,
+  `subject` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `attachments` text DEFAULT NULL,
+  `status` enum('pending','accepted','rejected','completed') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `siege_id` int(11) DEFAULT NULL,
+  `appointment_details` text DEFAULT NULL,
+  `refusal_message` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `association_id` (`association_id`),
+  KEY `siege_id` (`siege_id`),
+  CONSTRAINT `help_requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `help_requests_ibfk_2` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `help_requests_ibfk_3` FOREIGN KEY (`siege_id`) REFERENCES `sieges` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'material_donations':
+CREATE TABLE `material_donations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `association_id` int(11) NOT NULL,
+  `siege_id` int(11) DEFAULT NULL,
+  `category` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `quantity` varchar(100) DEFAULT NULL,
+  `status` enum('pending','scheduled','collected','cancelled') DEFAULT 'pending',
+  `pickup_date` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `association_id` (`association_id`),
+  KEY `siege_id` (`siege_id`),
+  CONSTRAINT `material_donations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `material_donations_ibfk_2` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `material_donations_ibfk_3` FOREIGN KEY (`siege_id`) REFERENCES `sieges` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'payments':
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `donation_id` int(11) NOT NULL,
+  `provider` varchar(100) DEFAULT NULL,
+  `provider_payment_id` varchar(255) DEFAULT NULL,
+  `status` enum('pending','completed','failed') NOT NULL DEFAULT 'pending',
+  `amount` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `donation_id` (`donation_id`),
+  CONSTRAINT `fk_payments_donation` FOREIGN KEY (`donation_id`) REFERENCES `donations` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+Structure of table 'sieges':
+CREATE TABLE `sieges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `association_id` int(11) NOT NULL,
+  `wilaya_id` int(11) NOT NULL,
+  `address` text NOT NULL,
+  `manager_user_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `association_id` (`association_id`),
+  KEY `wilaya_id` (`wilaya_id`),
+  KEY `manager_user_id` (`manager_user_id`),
+  CONSTRAINT `sieges_ibfk_1` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `sieges_ibfk_2` FOREIGN KEY (`wilaya_id`) REFERENCES `wilayas` (`id`),
+  CONSTRAINT `sieges_ibfk_3` FOREIGN KEY (`manager_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'tasks':
+CREATE TABLE `tasks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `association_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `assigned_to` int(11) DEFAULT NULL,
+  `status` enum('pending','in_progress','completed') DEFAULT 'pending',
+  `priority` enum('low','medium','high') DEFAULT 'medium',
+  `due_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `association_id` (`association_id`),
+  KEY `assigned_to` (`assigned_to`),
+  CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`association_id`) REFERENCES `associations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'users':
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(100) NOT NULL,
+  `prenom` varchar(100) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('admin','president_assoc','president_siege','user') DEFAULT 'user',
+  `phone` varchar(20) DEFAULT NULL,
+  `wilaya_id` int(11) DEFAULT NULL,
+  `status` enum('active','inactive','suspended') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `wilaya_id` (`wilaya_id`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`wilaya_id`) REFERENCES `wilayas` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'volunteers':
+CREATE TABLE `volunteers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `campaign_id` int(11) NOT NULL,
+  `status` enum('registered','confirmed','attended','cancelled') DEFAULT 'registered',
+  `registered_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_campaign` (`user_id`,`campaign_id`),
+  KEY `campaign_id` (`campaign_id`),
+  CONSTRAINT `volunteers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `volunteers_ibfk_2` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+Structure of table 'wilayas':
+CREATE TABLE `wilayas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `code` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+No sieges found to delete.
