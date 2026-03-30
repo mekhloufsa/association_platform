@@ -55,6 +55,12 @@
             <h3 style="margin-bottom: 0.25rem;">Bénévolat</h3>
         </div>
     </a>
+    <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/annonces" class="glass-panel" style="padding: 1.5rem; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 1rem;">
+        <span style="font-size: 2rem;">📢</span>
+        <div>
+            <h3 style="margin-bottom: 0.25rem;">Annonces</h3>
+        </div>
+    </a>
 </div>
 
 <div class="glass-panel" style="margin-top: 3rem; padding: 2rem;">

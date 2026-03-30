@@ -1,4 +1,3 @@
-<?php str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']); ?>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
     <h1 class="gradient-text">Gestion des Utilisateurs</h1>
     <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/dashboard" class="btn btn-secondary">Retour au Dashboard</a>
@@ -18,7 +17,6 @@
                 <option value="">Tous les rôles</option>
                 <option value="user" <?= $role === 'user' ? 'selected' : '' ?>>Citoyen</option>
                 <option value="president_assoc" <?= $role === 'president_assoc' ? 'selected' : '' ?>>Président</option>
-                <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>Admin</option>
             </select>
         </div>
         <div>

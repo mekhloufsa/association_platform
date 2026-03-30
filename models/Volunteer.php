@@ -40,4 +40,10 @@ class Volunteer extends Model {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$status, $id]);
     }
+
+    public function isRegistered($userId, $campaignId) {
+        $stmt = $this->db->prepare("SELECT id FROM {$this->table} WHERE user_id = ? AND campaign_id = ? AND status != 'cancelled'");
+        $stmt->execute([$userId, $campaignId]);
+        return (bool)$stmt->fetch();
+    }
 }

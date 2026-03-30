@@ -6,6 +6,48 @@
     <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/assoc/add-campaign" class="btn btn-primary">+ Nouvelle Campagne</a>
 </div>
 
+<?php if(!empty($pendingCampaigns)): ?>
+<div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem; border: 1px solid #f59e0b;">
+    <h2 style="color: #f59e0b; margin-bottom: 1.5rem; font-size: 1.2rem;">⚠️ Campagnes Locales en Attente de Validation</h2>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: var(--text-main);">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border); text-align: left;">
+                    <th style="padding: 1rem;">Campagne</th>
+                    <th style="padding: 1rem;">Bureau Siège</th>
+                    <th style="padding: 1rem;">Détails</th>
+                    <th style="padding: 1rem; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($pendingCampaigns as $pc): ?>
+                    <tr style="border-bottom: 1px solid var(--glass-border);">
+                        <td style="padding: 1rem;">
+                            <div style="font-weight: 600;"><?= htmlspecialchars($pc['title']) ?></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);"><?= date('d/m/Y', strtotime($pc['start_date'])) ?> au <?= date('d/m/Y', strtotime($pc['end_date'])) ?></div>
+                        </td>
+                        <td style="padding: 1rem;">
+                            <?= htmlspecialchars($pc['siege_address']) ?>
+                        </td>
+                        <td style="padding: 1rem; font-size: 0.9rem;">
+                            <span style="color: var(--accent-color);"><?= $pc['need_type'] === 'personnel' ? 'Bénévoles' : 'Collecte Financière' ?></span><br>
+                            <?= htmlspecialchars(substr($pc['description'], 0, 50)) ?>...
+                        </td>
+                        <td style="padding: 1rem; text-align: right;">
+                            <form action="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/assoc/campaign-approval" method="POST" style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                <input type="hidden" name="campaign_id" value="<?= $pc['id'] ?>">
+                                <button type="submit" name="status" value="rejected" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Refuser</button>
+                                <button type="submit" name="status" value="approved" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #10b981; border: none;">Approuver</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="glass-panel" style="padding: 2rem;">
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; color: var(--text-main);">

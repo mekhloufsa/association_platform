@@ -1,14 +1,4 @@
-    <?php if(count($spaces) > 1): ?>
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 12px; width: fit-content;">
-        <?php foreach($spaces as $space): ?>
-            <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/switch?to=<?= $space ?>" 
-               class="btn <?= $current_space === $space ? 'btn-primary' : 'btn-secondary' ?>" 
-               style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">
-               Espace <?= ucfirst($space) ?>
-            </a>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
+<?php $base = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']); ?>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h1 class="gradient-text">Mon Espace Citoyen</h1>
@@ -63,14 +53,13 @@
                             </td>
                             <td style="padding: 1rem; font-size: 0.85rem;">
                                 <?php if($r['status'] === 'accepted'): ?>
-                                    <div style="color: #10b981; font-weight: 600;">Rendez-vous :</div>
-                                    <div style="color: var(--text-muted); white-space: pre-line;"><?= htmlspecialchars($r['appointment_details']) ?></div>
+                                    <div style="color: #10b981; font-weight: 600;">Demande Acceptée</div>
                                 <?php elseif($r['status'] === 'rejected'): ?>
-                                    <div style="color: #ef4444; font-weight: 600;">Message :</div>
-                                    <div style="color: var(--text-muted);"><?= htmlspecialchars($r['refusal_message']) ?></div>
+                                    <div style="color: #ef4444; font-weight: 600;">Demande Refusée</div>
                                 <?php else: ?>
-                                    <span style="color: var(--text-muted);">En attente de traitement</span>
+                                    <div style="color: var(--text-muted);">En attente</div>
                                 <?php endif; ?>
+                                <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/help-request/<?= $r['id'] ?>" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; border: 1px dashed var(--accent-color); margin-top: 0.5rem;">Visualiser la réponse →</a>
                             </td>
                         </tr>
                     <?php endforeach; else: ?>
@@ -127,11 +116,8 @@
                                     <span style="padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; background: <?= $mdColor ?>22; color: <?= $mdColor ?>; border: 1px solid <?= $mdColor ?>55; display: inline-block; margin-bottom: 0.5rem;">
                                         <?= $mdStatus ?>
                                     </span>
-                                    <?php if($md['status'] === 'scheduled' && !empty($md['pickup_date'])): ?>
-                                        <div style="font-size: 0.8rem; color: #3b82f6; font-weight: 600;">RDV: <?= date('d/m/Y H:i', strtotime($md['pickup_date'])) ?></div>
-                                    <?php elseif($md['status'] === 'cancelled' && !empty($md['manager_message'])): ?>
-                                        <div style="font-size: 0.8rem; color: #ef4444; margin-top: 0.2rem;">Message: <?= htmlspecialchars($md['manager_message']) ?></div>
-                                    <?php endif; ?>
+                                    <br>
+                                    <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/material-donation/<?= $md['id'] ?>" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; border: 1px dashed var(--accent-color);">Voir les détails →</a>
                                 </td>
                             </tr>
                         <?php endforeach; else: ?>

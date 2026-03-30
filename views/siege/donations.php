@@ -30,7 +30,8 @@
                                 <?= ucfirst($d['status']) ?>
                             </span>
                         </td>
-                        <td style="padding: 1rem; text-align: right;">
+                        <td style="padding: 1rem; text-align: right; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/siege/material-donation/<?= $d['id'] ?>" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Détails</a>
                             <?php if($d['status'] === 'pending'): ?>
                                 <button class="btn btn-primary" onclick="openAcceptModal(<?= $d['id'] ?>)" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #10b981;">Accepter</button>
                                 <button class="btn btn-secondary" onclick="openRefuseModal(<?= $d['id'] ?>)" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #ef4444; border: none;">Refuser</button>

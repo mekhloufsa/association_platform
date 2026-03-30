@@ -69,12 +69,18 @@
                 </table>
             </div>
             
+            <?php if ($user['role'] !== 'admin'): ?>
             <div style="margin-top: 2rem; display: flex; gap: 1rem;">
                 <form action="<?= $basePath ?>/admin/user/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
                     <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                    <button type="submit" class="btn btn-secondary" style="background: #ef4444; border: none; font-size: 0.85rem;">Supprimer cet utilisateur</button>
+                    <button type="submit" class="btn btn-secondary" style="background: #ef4444; border: none; font-size: 0.85rem; color: white;">Supprimer cet utilisateur</button>
                 </form>
             </div>
+            <?php else: ?>
+            <div style="margin-top: 2rem; padding: 1rem; background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; border-radius: 4px;">
+                <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">🚫 Il n'est pas possible de supprimer un compte Administrateur.</p>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

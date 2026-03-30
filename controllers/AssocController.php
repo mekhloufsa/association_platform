@@ -163,10 +163,19 @@ class AssocController extends Controller {
         $association = $assocModel->findByPresidentId($_SESSION['user_id']);
 
         $campaignModel = new Campaign();
-        $campaigns = $campaignModel->findByAssociationId($association['id']);
+        $allCampaigns = $campaignModel->findByAssociationId($association['id']);
+        
+        $pendingCampaigns = $campaignModel->findPendingByAssociation($association['id']);
+        $activeCampaigns = [];
+        foreach($allCampaigns as $c) {
+            if($c['approval_status'] !== 'pending') {
+                $activeCampaigns[] = $c;
+            }
+        }
 
         $this->render('assoc/campaigns', [
-            'campaigns' => $campaigns
+            'campaigns' => $activeCampaigns,
+            'pendingCampaigns' => $pendingCampaigns
         ]);
     }
 
@@ -196,6 +205,17 @@ class AssocController extends Controller {
         $need_type = filter_input(INPUT_POST, 'need_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $financial_goal = filter_input(INPUT_POST, 'financial_goal', FILTER_VALIDATE_FLOAT);
 
+        // Upload image
+        $image_path = null;
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = '../public/uploads/campaigns/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
+                $image_path = 'public/uploads/campaigns/' . $fileName;
+            }
+        }
+
         $campaignModel = new Campaign();
         $result = $campaignModel->create([
             'association_id' => $association['id'],
@@ -207,7 +227,9 @@ class AssocController extends Controller {
             'max_volunteers' => $max_volunteers ?: null,
             'campaign_type' => $campaign_type,
             'need_type' => $need_type,
-            'financial_goal' => $need_type === 'argent' ? $financial_goal : null
+            'financial_goal' => $need_type === 'financial' ? $financial_goal : null,
+            'image_path' => $image_path,
+            'approval_status' => 'approved'
         ]);
 
         if ($result) {
@@ -252,6 +274,23 @@ class AssocController extends Controller {
         }
 
         $this->redirect('/assoc/campaign/' . $campaign_id);
+    }
+
+    public function updateCampaignApproval() {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_assoc' || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/assoc/dashboard');
+        }
+
+        $campaign_id = filter_input(INPUT_POST, 'campaign_id', FILTER_VALIDATE_INT);
+        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if ($campaign_id && in_array($status, ['approved', 'rejected'])) {
+            $campaignModel = new Campaign();
+            $campaignModel->updateApprovalStatus($campaign_id, $status);
+            $this->setFlash('success', "Le statut de la campagne locale a été mis à jour.");
+        }
+
+        $this->redirect('/assoc/campaigns');
     }
 
     public function helpRequests() {
@@ -421,5 +460,27 @@ class AssocController extends Controller {
         }
 
         $this->redirect('/assoc/dashboard');
+    }
+
+    public function materialDonationDetail($id) {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_assoc') {
+            $this->redirect('/login');
+        }
+
+        $assocModel = new Association();
+        $association = $assocModel->findByPresidentId($_SESSION['user_id']);
+
+        $mdModel = new MaterialDonation();
+        $donation = $mdModel->findByIdWithDetails($id);
+
+        // Security check: donation belongs to this association
+        if (!$donation || $donation['association_id'] != $association['id']) {
+            $this->setFlash('error', "Don introuvable ou accès non autorisé.");
+            $this->redirect('/assoc/dashboard');
+        }
+
+        $this->render('siege/material_donation_detail', [
+            'donation' => $donation
+        ]);
     }
 }

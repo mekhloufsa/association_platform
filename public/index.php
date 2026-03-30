@@ -31,6 +31,9 @@ $router->get('/', 'HomeController@index');
 $router->get('/associations', 'AssociationController@index');
 $router->get('/association/{slug}', 'AssociationController@show');
 $router->get('/annonces', 'AnnonceController@index');
+$router->get('/annonce/{id}', 'AnnonceController@show');
+$router->get('/campaign/{id}', 'AnnonceController@campaignShow');
+$router->post('/campaign/register/{id}', 'AnnonceController@registerToCampaign');
 
 // Auth routes
 $router->get('/login', 'AuthController@showLogin');
@@ -43,9 +46,11 @@ $router->get('/logout', 'AuthController@logout');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/help-request', 'DashboardController@helpRequestForm');
 $router->post('/dashboard/help-request', 'DashboardController@submitHelpRequest');
+$router->get('/dashboard/help-request/{id}', 'DashboardController@helpRequestDetail');
 
 $router->get('/dashboard/donation', 'DashboardController@donationForm');
 $router->post('/dashboard/donation', 'DashboardController@submitDonation');
+$router->get('/dashboard/material-donation/{id}', 'DashboardController@materialDonationDetail');
 $router->get('/dashboard/campaigns', 'DashboardController@campaigns');
 $router->post('/dashboard/register-volunteer', 'DashboardController@registerVolunteer');
 
@@ -57,13 +62,28 @@ $router->get('/admin/associations', 'AdminController@associations');
 $router->post('/admin/association/delete', 'AdminController@deleteAssociation');
 $router->post('/admin/association/validate', 'AdminController@validateAssociation');
 $router->get('/admin/help-requests', 'AdminController@helpRequests');
+$router->get('/admin/help-request/{id}', 'AdminController@helpRequestDetail');
 $router->get('/admin/donations', 'AdminController@donations');
+$router->get('/admin/donation/{id}', 'AdminController@donationDetail');
 $router->get('/admin/material-donations', 'AdminController@materialDonations');
+$router->get('/admin/material-donation/{id}', 'AdminController@materialDonationDetail');
 $router->get('/admin/campaigns', 'AdminController@campaigns');
+$router->get('/admin/campaign/{id}', 'AdminController@campaignDetail');
+$router->get('/admin/campaign/edit/{id}', 'AdminController@editCampaign');
+$router->post('/admin/campaign/save', 'AdminController@saveCampaign');
+$router->post('/admin/campaign/status', 'AdminController@updateCampaignStatus');
+$router->post('/admin/campaign/delete', 'AdminController@deleteCampaign');
 $router->get('/admin/user/{id}', 'AdminController@userDetail');
 $router->get('/admin/association/{id}', 'AdminController@associationDetail');
 $router->get('/admin/siege/{id}', 'AdminController@siegeDetail');
 $router->post('/admin/siege/delete', 'AdminController@deleteSiege');
+
+// Admin Annonces
+$router->get('/admin/annonces', 'AdminController@annonces');
+$router->get('/admin/add-annonce', 'AdminController@addAnnonce');
+$router->post('/admin/add-annonce', 'AdminController@saveAnnonce');
+$router->get('/admin/annonce/edit/{id}', 'AdminController@editAnnonce');
+$router->post('/admin/annonce/delete', 'AdminController@deleteAnnonce');
 
 // Espace Président d'Association
 $router->get('/assoc/dashboard', 'AssocController@dashboard');
@@ -91,8 +111,10 @@ $router->post('/assoc/siege/remove-manager', 'AssocController@removeSiegeManager
 $router->get('/assoc/campaigns', 'AssocController@campaigns');
 $router->get('/assoc/add-campaign', 'AssocController@addCampaign');
 $router->post('/assoc/add-campaign', 'AssocController@saveCampaign');
+$router->post('/assoc/campaign-approval', 'AssocController@updateCampaignApproval');
 $router->get('/assoc/campaign/{id}', 'AssocController@volunteers');
 $router->post('/assoc/volunteer/status', 'AssocController@updateVolunteerStatus');
+$router->get('/assoc/material-donation/{id}', 'AssocController@materialDonationDetail');
 
 $router->get('/siege/dashboard', 'SiegeController@dashboard');
 $router->get('/siege/help-requests', 'SiegeController@helpRequests');
@@ -101,6 +123,10 @@ $router->get('/dashboard/thank-you', 'DashboardController@thankYou');
 $router->get('/siege/donations', 'SiegeController@donations');
 $router->post('/siege/donation/status', 'SiegeController@updateDonationStatus');
 $router->get('/siege/volunteers', 'SiegeController@volunteers');
+$router->get('/siege/material-donation/{id}', 'SiegeController@materialDonationDetail');
+$router->get('/siege/campaigns', 'SiegeController@campaigns');
+$router->get('/siege/add-campaign', 'SiegeController@addCampaign');
+$router->post('/siege/add-campaign', 'SiegeController@saveCampaign');
 
 $router->get('/assoc/settings', 'AssocController@settings');
 $router->post('/assoc/settings', 'AssocController@saveSettings');

@@ -15,6 +15,7 @@
                     <th style="padding: 1rem;">Donation (Catégorie & Quantité)</th>
                     <th style="padding: 1rem;">Association (Siège)</th>
                     <th style="padding: 1rem;">Statut</th>
+                    <th style="padding: 1rem; text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,6 +49,9 @@
                             <span class="badge badge-<?= $statusBadge ?>">
                                 <?= $statusText ?>
                             </span>
+                        </td>
+                        <td style="padding: 1rem; text-align: right;">
+                            <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/material-donation/<?= $d['id'] ?>" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Détails</a>
                         </td>
                     </tr>
                 <?php endforeach; else: ?>

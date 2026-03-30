@@ -144,6 +144,7 @@ $base = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
                         <th style="padding: 0.75rem;">Qté</th>
                         <th style="padding: 0.75rem;">Statut</th>
                         <th style="padding: 0.75rem;">Date</th>
+                        <th style="padding: 0.75rem; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,6 +171,9 @@ $base = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
                             </td>
                             <td style="padding: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
                                 <?= date('d/m/Y', strtotime($md['created_at'])) ?>
+                            </td>
+                            <td style="padding: 0.75rem; text-align: right;">
+                                <a href="<?= $base ?>/assoc/material-donation/<?= $md['id'] ?>" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;">Détails</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

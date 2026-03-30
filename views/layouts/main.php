@@ -16,30 +16,53 @@ $basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
     <link rel="stylesheet" href="<?= $basePath ?>/css/style.css">
 </head>
 <body>
-    <!-- Navigation (Glassmorphism) -->
+    <?php 
+        $active_space = $_SESSION['active_space'] ?? 'citizen';
+        $user_role = $_SESSION['user_role'] ?? 'guest';
+        $user_id = $_SESSION['user_id'] ?? null;
+        
+        // Define dashboards
+        $citizenDashboard = $basePath . '/dashboard';
+        $assocDashboard = $basePath . '/assoc/dashboard';
+        $siegeDashboard = $basePath . '/siege/dashboard';
+        $adminDashboard = $basePath . '/admin/dashboard';
+    ?>
     <nav class="navbar">
         <div class="nav-container">
             <a href="<?= $basePath ?>/" class="logo">Aura</a>
             <div class="nav-links">
-                <a href="<?= $basePath ?>/">Accueil</a>
-                <?php if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin'): ?>
+                <!-- Navigation adaptative -->
+                <?php if ($active_space === 'citizen' || !$user_id): ?>
+                    <a href="<?= $basePath ?>/">Accueil</a>
                     <a href="<?= $basePath ?>/annonces">Annonces</a>
                     <a href="<?= $basePath ?>/associations">Associations</a>
-                <?php else: ?>
-                    <a href="<?= $basePath ?>/annonces">Toutes les Annonces</a>
-                    <a href="<?= $basePath ?>/admin/associations">Gérer Associations</a>
-                    <a href="<?= $basePath ?>/admin/users">Gérer Utilisateurs</a>
                 <?php endif; ?>
                 
-                <?php if(isset($_SESSION['user_id'])): ?>
-                    <?php 
-                        $dashboardLink = '/dashboard';
-                        if($_SESSION['user_role'] === 'admin') $dashboardLink = '/admin/dashboard';
-                        elseif($_SESSION['user_role'] === 'president_assoc') $dashboardLink = '/assoc/dashboard';
-                        elseif($_SESSION['user_role'] === 'president_siege') $dashboardLink = '/siege/dashboard';
-                    ?>
-                    <a href="<?= $basePath ?><?= $dashboardLink ?>" class="btn btn-secondary">Mon Espace (<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>)</a>
-                    <a href="<?= $basePath ?>/logout" class="btn btn-primary" style="background: rgba(239, 68, 68, 0.8);">Déconnexion</a>
+                <?php if($user_id): ?>
+                    <?php if ($user_role !== 'admin'): ?>
+                    <!-- Sélecteur d'espace intégré -->
+                    <div style="display: flex; gap: 0.2rem; background: rgba(255,255,255,0.05); padding: 0.2rem; border-radius: 8px;">
+                        <?php if ($user_role !== 'admin'): ?>
+                        <a href="<?= $basePath ?>/dashboard/switch?to=citizen" 
+                           class="btn <?= $active_space === 'citizen' ? 'btn-primary' : 'btn-secondary' ?>" 
+                           style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border: none;">Citoyen</a>
+                        <?php endif; ?>
+                        
+                        <?php if ($user_role === 'president_assoc'): ?>
+                            <a href="<?= $basePath ?>/dashboard/switch?to=association" 
+                               class="btn <?= $active_space === 'association' ? 'btn-primary' : 'btn-secondary' ?>" 
+                               style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border: none;">Association</a>
+                        <?php endif; ?>
+
+                        <?php if ($user_role === 'president_siege'): ?>
+                            <a href="<?= $basePath ?>/dashboard/switch?to=siege" 
+                               class="btn <?= $active_space === 'siege' ? 'btn-primary' : 'btn-secondary' ?>" 
+                               style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border: none;">Siège</a>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <a href="<?= $basePath ?>/logout" class="btn btn-primary" style="background: rgba(239, 68, 68, 0.8); box-shadow: none;">Déconnexion</a>
                 <?php else: ?>
                     <a href="<?= $basePath ?>/login" class="btn btn-primary">Connexion</a>
                 <?php endif; ?>

@@ -6,6 +6,11 @@ class DashboardController extends Controller {
             $this->redirect('/login');
         }
 
+        // Admin goes directly to their own space, no citizen dashboard
+        if ($_SESSION['user_role'] === 'admin') {
+            $this->redirect('/admin/dashboard');
+        }
+
         // Space Switching Logic
         $current_space = $_SESSION['active_space'] ?? 'citizen';
         
@@ -162,6 +167,20 @@ class DashboardController extends Controller {
         }
     }
 
+    public function helpRequestDetail($id) {
+        if (!isset($_SESSION['user_id'])) $this->redirect('/login');
+        
+        $model = new HelpRequest();
+        $request = $model->findByIdWithDetails($id);
+        
+        if (!$request || $request['user_id'] !== $_SESSION['user_id']) {
+            $this->setFlash('error', "Demande introuvable ou accès non autorisé.");
+            $this->redirect('/dashboard');
+        }
+        
+        $this->render('dashboard/help_request_detail', ['request' => $request]);
+    }
+
     public function donationForm() {
         if (!isset($_SESSION['user_id'])) {
             $this->redirect('/login');
@@ -235,6 +254,20 @@ class DashboardController extends Controller {
             $this->setFlash('error', "Une erreur est survenue lors du traitement.");
             $this->redirect('/dashboard/donation');
         }
+    }
+
+    public function materialDonationDetail($id) {
+        if (!isset($_SESSION['user_id'])) $this->redirect('/login');
+        
+        $model = new MaterialDonation();
+        $donation = $model->findByIdWithDetails($id);
+        
+        if (!$donation || $donation['user_id'] !== $_SESSION['user_id']) {
+            $this->setFlash('error', "Don introuvable ou accès non autorisé.");
+            $this->redirect('/dashboard');
+        }
+        
+        $this->render('dashboard/material_donation_detail', ['donation' => $donation]);
     }
 
     public function campaigns() {

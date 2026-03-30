@@ -24,6 +24,17 @@ class Donation extends Model {
         return $stmt->fetchAll();
     }
 
+    public function findByIdWithDetails($id) {
+        $stmt = $this->db->prepare("SELECT d.*, u.nom, u.prenom, u.email, u.phone, a.name as association_name, s.address as siege_address 
+                                   FROM {$this->table} d 
+                                   JOIN users u ON d.user_id = u.id 
+                                   LEFT JOIN associations a ON d.association_id = a.id 
+                                   LEFT JOIN sieges s ON d.siege_id = s.id 
+                                   WHERE d.id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function findByAssociationId($assocId) {
         $stmt = $this->db->prepare("SELECT d.*, u.nom, u.prenom 
                                    FROM {$this->table} d 

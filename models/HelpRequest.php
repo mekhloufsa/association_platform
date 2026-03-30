@@ -69,6 +69,17 @@ class HelpRequest extends Model {
         return $stmt->fetchAll();
     }
 
+    public function findByIdWithDetails($id) {
+        $stmt = $this->db->prepare("SELECT hr.*, u.nom, u.prenom, u.email, u.phone, a.name as association_name, s.address as siege_address 
+                                  FROM {$this->table} hr 
+                                  JOIN users u ON hr.user_id = u.id 
+                                  LEFT JOIN associations a ON hr.association_id = a.id 
+                                  LEFT JOIN sieges s ON hr.siege_id = s.id 
+                                  WHERE hr.id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function updateStatus($id, $status, $appointmentDetails = null, $refusalMessage = null) {
         $stmt = $this->db->prepare("UPDATE {$this->table} SET status = ?, appointment_details = ?, refusal_message = ? WHERE id = ?");
         return $stmt->execute([$status, $appointmentDetails, $refusalMessage, $id]);

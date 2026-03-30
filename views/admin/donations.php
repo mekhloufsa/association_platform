@@ -16,6 +16,7 @@
                     <th style="padding: 1rem;">Bénéficiaire (Association/Antenne)</th>
                     <th style="padding: 1rem;">Montant</th>
                     <th style="padding: 1rem;">Statut</th>
+                    <th style="padding: 1rem; text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,6 +39,9 @@
                             <span class="badge badge-<?= $d['status'] === 'completed' ? 'success' : 'warning' ?>">
                                 <?= ucfirst($d['status']) ?>
                             </span>
+                        </td>
+                        <td style="padding: 1rem; text-align: right;">
+                            <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/donation/<?= $d['id'] ?>" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Détails</a>
                         </td>
                     </tr>
                 <?php endforeach; else: ?>

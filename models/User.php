@@ -41,7 +41,9 @@ class User extends Model {
             $params[] = $searchTerm;
         }
 
-        if ($role) {
+        $sql .= " AND u.role != 'admin'";
+
+        if ($role && $role !== 'admin') {
             $sql .= " AND u.role = ?";
             $params[] = $role;
         }

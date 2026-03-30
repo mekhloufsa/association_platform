@@ -14,6 +14,7 @@
                     <th style="padding: 1rem;">Association</th>
                     <th style="padding: 1rem;">Sujet</th>
                     <th style="padding: 1rem;">Statut</th>
+                    <th style="padding: 1rem; text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +41,9 @@
                             <span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; background: <?= $statusColor ?>22; color: <?= $statusColor ?>; border: 1px solid <?= $statusColor ?>55;">
                                 <?= ucfirst($req['status']) ?>
                             </span>
+                        </td>
+                        <td style="padding: 1rem; text-align: right;">
+                            <a href="<?= $basePath ?>/admin/help-request/<?= $req['id'] ?>" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Détails</a>
                         </td>
                     </tr>
                 <?php endforeach; else: ?>

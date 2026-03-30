@@ -36,6 +36,17 @@ class MaterialDonation extends Model {
         return $stmt->fetchAll();
     }
 
+    public function findByIdWithDetails($id) {
+        $stmt = $this->db->prepare("SELECT md.*, u.nom, u.prenom, u.email, u.phone, a.name as association_name, s.address as siege_address 
+                                  FROM {$this->table} md 
+                                  JOIN users u ON md.user_id = u.id 
+                                  LEFT JOIN associations a ON md.association_id = a.id 
+                                  LEFT JOIN sieges s ON md.siege_id = s.id 
+                                  WHERE md.id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function findBySiegeId($siegeId) {
         $stmt = $this->db->prepare("SELECT md.*, u.nom, u.prenom 
                                   FROM {$this->table} md 

@@ -1,10 +1,4 @@
-<div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 12px; width: fit-content;">
-    <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/switch?to=citizen" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Citoyen</a>
-    <a href="#" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Association</a>
-    <?php if($_SESSION['user_role'] === 'president_siege' || $_SESSION['user_role'] === 'admin'): ?>
-        <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/switch?to=siege" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Siège</a>
-    <?php endif; ?>
-</div>
+<?php $base = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']); ?>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
     <div>
@@ -12,8 +6,8 @@
         <p style="color: var(--text-muted);">Espace Président d'Association - Administration Nationale</p>
     </div>
     <div style="display: flex; gap: 1rem;">
-        <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/assoc/add-campaign" class="btn btn-primary">+ Nouvelle Campagne</a>
-        <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/assoc/add-siege" class="btn btn-secondary">+ Ajouter un Siège</a>
+        <a href="<?= $base ?>/assoc/add-campaign" class="btn btn-primary">+ Nouvelle Campagne</a>
+        <a href="<?= $base ?>/assoc/add-siege" class="btn btn-secondary">+ Ajouter un Siège</a>
     </div>
 </div>
 

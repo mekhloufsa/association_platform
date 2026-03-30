@@ -146,6 +146,26 @@ class SiegeController extends Controller {
         $this->redirect('/siege/donations');
     }
 
+    public function materialDonationDetail($id) {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_siege') {
+            $this->redirect('/login');
+        }
+
+        $siege = $this->getSiegeInfo();
+        $mdModel = new MaterialDonation();
+        $donation = $mdModel->findByIdWithDetails($id);
+
+        if (!$donation || $donation['siege_id'] != $siege['id']) {
+            $this->setFlash('error', "Don introuvable ou accès non autorisé.");
+            $this->redirect('/siege/donations');
+        }
+
+        $this->render('siege/material_donation_detail', [
+            'donation' => $donation,
+            'siege' => $siege
+        ]);
+    }
+
     public function volunteers() {
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_siege') {
             $this->redirect('/login');
@@ -167,5 +187,86 @@ class SiegeController extends Controller {
             'volunteers' => $volunteers,
             'siege' => $siege
         ]);
+    }
+
+    public function campaigns() {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_siege') {
+            $this->redirect('/login');
+        }
+
+        $siege = $this->getSiegeInfo();
+        if (!$siege) $this->redirect('/siege/dashboard');
+
+        $campaignModel = new Campaign();
+        $campaigns = $campaignModel->findBySiegeId($siege['id']);
+
+        $this->render('siege/campaigns', [
+            'campaigns' => $campaigns,
+            'siege' => $siege
+        ]);
+    }
+
+    public function addCampaign() {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_siege') {
+            $this->redirect('/login');
+        }
+
+        $siege = $this->getSiegeInfo();
+        if (!$siege) $this->redirect('/siege/dashboard');
+
+        $this->render('siege/add_campaign', ['siege' => $siege]);
+    }
+
+    public function saveCampaign() {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'president_siege' || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/siege/dashboard');
+        }
+
+        $siege = $this->getSiegeInfo();
+        if (!$siege) $this->redirect('/siege/dashboard');
+
+        $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $start_date = filter_input(INPUT_POST, 'start_date', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $end_date = filter_input(INPUT_POST, 'end_date', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $target = filter_input(INPUT_POST, 'target', FILTER_VALIDATE_INT);
+        $need_type = filter_input(INPUT_POST, 'need_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        // Upload image
+        $image_path = null;
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = '../public/uploads/campaigns/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
+                $image_path = 'public/uploads/campaigns/' . $fileName;
+            }
+        }
+
+        $data = [
+            'association_id' => $siege['association_id'],
+            'siege_id' => $siege['id'],
+            'title' => $title,
+            'description' => $description,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'location' => $location,
+            'need_type' => $need_type,
+            'max_volunteers' => ($need_type === 'personnel') ? $target : null,
+            'financial_goal' => ($need_type === 'financial') ? $target : null,
+            'campaign_type' => 'local',
+            'image_path' => $image_path,
+            'approval_status' => 'pending' // En attente de validation par le président national
+        ];
+
+        $campaignModel = new Campaign();
+        if ($campaignModel->create($data)) {
+            $this->setFlash('success', "Campagne locale proposée avec succès. Elle est en attente de validation par l'association.");
+            $this->redirect('/siege/campaigns');
+        } else {
+            $this->setFlash('error', "Erreur lors de la proposition de la campagne.");
+            $this->redirect('/siege/add-campaign');
+        }
     }
 }

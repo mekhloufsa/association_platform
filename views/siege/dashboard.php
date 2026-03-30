@@ -1,14 +1,15 @@
 <div style="padding: 2rem;">
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 12px; width: fit-content;">
-        <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/switch?to=citizen" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Citoyen</a>
-        <?php if($_SESSION['user_role'] === 'president_assoc' || $_SESSION['user_role'] === 'admin'): ?>
-            <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/dashboard/switch?to=association" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Association</a>
-        <?php endif; ?>
-        <a href="#" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border: none;">Espace Siège</a>
-    </div>
+<?php $base = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']); ?>
 
-    <h1 class="gradient-text">Espace Président de Siège (Wilaya)</h1>
-    <p>Bienvenue <?= htmlspecialchars($name) ?> ! Gérez votre antenne locale.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 class="gradient-text">Espace Président de Siège (Wilaya)</h1>
+            <p>Bienvenue <?= htmlspecialchars($name) ?> ! Gérez votre antenne locale.</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="<?= $base ?>/siege/add-campaign" class="btn btn-primary">+ Nouvelle Campagne locale</a>
+        </div>
+    </div>
     
     <div class="feature-grid" style="margin-top: 2rem;">
         <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/siege/help-requests" class="feature-card glass-panel" style="text-decoration: none; display: block;">
@@ -22,6 +23,10 @@
         <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/siege/volunteers" class="feature-card glass-panel" style="text-decoration: none; display: block;">
             <h3>Bénévoles Locaux</h3>
             <p>Gérer les inscriptions aux campagnes dans votre wilaya.</p>
+        </a>
+        <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/siege/campaigns" class="feature-card glass-panel" style="text-decoration: none; display: block; border: 1px dashed var(--accent-color);">
+            <h3 style="color: var(--accent-color);">Campagnes Locales</h3>
+            <p>Proposer et suivre vos propres campagnes et collectes.</p>
         </a>
     </div>
 

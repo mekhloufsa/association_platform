@@ -92,4 +92,9 @@ class Association extends Model {
         $stmt = $this->db->prepare("UPDATE {$this->table} SET thank_you_message = ? WHERE id = ?");
         return $stmt->execute([$message, $id]);
     }
+
+    public function updateStatus($id, $status) {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET national_account_status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
 }
