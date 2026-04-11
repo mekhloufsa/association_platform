@@ -6,7 +6,7 @@
         <div class="hero-actions">
             <?php if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin'): ?>
                 <a href="associations" class="btn btn-primary">Trouver une association</a>
-                <a href="help" class="btn btn-secondary">Demander de l'aide</a>
+                <a href="dashboard/help-request" class="btn btn-secondary">Demander de l'aide</a>
             <?php else: ?>
                 <a href="admin/dashboard" class="btn btn-primary">Mon Tableau de bord Admin</a>
             <?php endif; ?>

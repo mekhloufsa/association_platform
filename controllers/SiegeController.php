@@ -236,11 +236,11 @@ class SiegeController extends Controller {
         // Upload image
         $image_path = null;
         if (!empty($_FILES['image']['name'])) {
-            $uploadDir = '../public/uploads/campaigns/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/campaigns/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
-                $image_path = 'public/uploads/campaigns/' . $fileName;
+                $image_path = 'uploads/campaigns/' . $fileName;
             }
         }
 

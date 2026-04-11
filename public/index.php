@@ -94,6 +94,7 @@ $router->post('/request/assoc-create', 'RequestController@createAssociation');
 $router->get('/request/siege-apply', 'RequestController@applyForSiege');
 $router->post('/request/siege-apply', 'RequestController@applyForSiege');
 $router->get('/admin/requests', 'RequestController@adminRequests');
+$router->get('/admin/association-request/{id}', 'RequestController@assocRequestDetail');
 $router->post('/admin/association-request/review', 'RequestController@reviewAssociation');
 $router->get('/assoc/siege-requests', 'RequestController@assocSiegeRequests');
 $router->post('/assoc/siege-request/review', 'RequestController@reviewSiege');

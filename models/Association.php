@@ -83,6 +83,19 @@ class Association extends Model {
         return $stmt->fetch();
     }
 
+    public function create($data) {
+        $sql = "INSERT INTO {$this->table} (name, slug, description, president_user_id, national_account_status) 
+                VALUES (:name, :slug, :description, :president_user_id, :national_account_status)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'                  => $data['name'],
+            ':slug'                  => $data['slug'],
+            ':description'           => $data['description'] ?? null,
+            ':president_user_id'     => $data['president_user_id'],
+            ':national_account_status' => $data['national_account_status'] ?? 'approved'
+        ]);
+    }
+
     public function delete($id) {
         $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = ?");
         return $stmt->execute([$id]);

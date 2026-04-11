@@ -17,10 +17,10 @@ class RequestController extends Controller {
             // File upload logic (simplified for now)
             $logo_path = null;
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'public/uploads/logos/';
+                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/logos/';
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-                $logo_path = $uploadDir . time() . '_' . basename($_FILES['logo']['name']);
-                move_uploaded_file($_FILES['logo']['tmp_name'], $logo_path);
+                $logo_path = 'uploads/logos/' . time() . '_' . basename($_FILES['logo']['name']);
+                move_uploaded_file($_FILES['logo']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/' . $logo_path);
             }
 
             $model = new AssociationRequest();
@@ -50,6 +50,22 @@ class RequestController extends Controller {
         $requests = $model->findAll();
 
         $this->render('admin/association_requests', ['requests' => $requests]);
+    }
+
+    public function assocRequestDetail($id) {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+            $this->redirect('/login');
+        }
+
+        $model = new AssociationRequest();
+        $request = $model->findByIdWithDetails($id);
+
+        if (!$request) {
+            $this->setFlash('error', "Demande introuvable.");
+            $this->redirect('/admin/requests');
+        }
+
+        $this->render('admin/association_request_detail', ['request' => $request]);
     }
 
     // --- Siege Workflow ---

@@ -232,11 +232,11 @@ class AdminController extends Controller {
         ];
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'public/uploads/campaigns/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/campaigns/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
-                $data['image_path'] = 'public/uploads/campaigns/' . $fileName;
+                $data['image_path'] = 'uploads/campaigns/' . $fileName;
             }
         }
 
@@ -333,21 +333,21 @@ class AdminController extends Controller {
         
         $image_path = false; // false means no new file uploaded
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'uploads/annonces/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/annonces/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
-                $image_path = $uploadDir . $fileName;
+                $image_path = 'uploads/annonces/' . $fileName;
             }
         }
 
         $attachment_path = false;
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'uploads/attachments/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/attachments/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
             $fileName = time() . '_' . basename($_FILES['attachment']['name']);
             if (move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadDir . $fileName)) {
-                $attachment_path = $uploadDir . $fileName;
+                $attachment_path = 'uploads/attachments/' . $fileName;
             }
         }
 

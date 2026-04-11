@@ -32,7 +32,9 @@ $basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
             <a href="<?= $basePath ?>/" class="logo">Aura</a>
             <div class="nav-links">
                 <!-- Navigation adaptative -->
-                <?php if ($active_space === 'citizen' || !$user_id): ?>
+                <?php if ($user_role === 'admin'): ?>
+                    <a href="<?= $adminDashboard ?>">Espace Admin</a>
+                <?php elseif ($active_space === 'citizen' || !$user_id): ?>
                     <a href="<?= $basePath ?>/">Accueil</a>
                     <a href="<?= $basePath ?>/annonces">Annonces</a>
                     <a href="<?= $basePath ?>/associations">Associations</a>

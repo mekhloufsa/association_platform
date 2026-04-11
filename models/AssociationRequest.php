@@ -32,6 +32,14 @@ class AssociationRequest extends Model {
         return $stmt->fetchAll();
     }
 
+    public function findByIdWithDetails($id) {
+        $stmt = $this->db->prepare("SELECT ar.*, u.nom, u.prenom, u.email, u.phone FROM {$this->table} ar 
+                                   JOIN users u ON ar.user_id = u.id 
+                                   WHERE ar.id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function updateStatus($id, $status, $message = null) {
         $stmt = $this->db->prepare("UPDATE {$this->table} SET status = ?, admin_message = ? WHERE id = ?");
         return $stmt->execute([$status, $message, $id]);

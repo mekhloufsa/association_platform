@@ -36,6 +36,7 @@
                                 </span>
                             </td>
                             <td style="padding: 1rem; text-align: right;">
+                                <a href="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/association-request/<?= $r['id'] ?>" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 0.5rem;">Voir détails</a>
                                 <?php if($r['status'] === 'pending'): ?>
                                     <form action="<?= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) ?>/admin/association-request/review" method="POST" style="display: inline-block;">
                                         <input type="hidden" name="id" value="<?= $r['id'] ?>">

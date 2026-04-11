@@ -134,7 +134,7 @@ class DashboardController extends Controller {
 
         $attachments = [];
         if (!empty($_FILES['files']['name'][0])) {
-            $uploadDir = '../public/uploads/help_requests/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/help_requests/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -143,7 +143,7 @@ class DashboardController extends Controller {
                 $fileName = time() . '_' . basename($_FILES['files']['name'][$key]);
                 $targetPath = $uploadDir . $fileName;
                 if (move_uploaded_file($tmpName, $targetPath)) {
-                    $attachments[] = 'public/uploads/help_requests/' . $fileName;
+                    $attachments[] = 'uploads/help_requests/' . $fileName;
                 }
             }
         }

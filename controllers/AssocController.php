@@ -208,11 +208,11 @@ class AssocController extends Controller {
         // Upload image
         $image_path = null;
         if (!empty($_FILES['image']['name'])) {
-            $uploadDir = '../public/uploads/campaigns/';
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/association_platform/public/uploads/campaigns/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
-                $image_path = 'public/uploads/campaigns/' . $fileName;
+                $image_path = 'uploads/campaigns/' . $fileName;
             }
         }
 
@@ -391,13 +391,16 @@ class AssocController extends Controller {
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         $siegeModel = new Siege();
-        $result = $siegeModel->delete($id);
 
-        if ($result) {
-            $this->setFlash('success', "Siège supprimé définitivement.");
-        } else {
-            $error = $siegeModel->errorInfo();
-            $this->setFlash('error', "Erreur lors de la suppression du siège : " . ($error[2] ?? 'Erreur inconnue'));
+        try {
+            $result = $siegeModel->delete($id);
+            if ($result) {
+                $this->setFlash('success', "Siège supprimé définitivement.");
+            } else {
+                $this->setFlash('error', "Erreur lors de la suppression du siège.");
+            }
+        } catch (\PDOException $e) {
+            $this->setFlash('error', "Impossible de supprimer ce siège : il contient des données liées (dons, demandes, etc.).");
         }
 
         $this->redirect('/assoc/sieges');
